@@ -1,4 +1,4 @@
-# HolyEstates - Project Summary
+# RiyalEstates - Project Summary
 
 ## Overview
 A full-stack Indian real estate marketplace similar to Magicbricks, 99acres, Housing.com, and NoBroker.
