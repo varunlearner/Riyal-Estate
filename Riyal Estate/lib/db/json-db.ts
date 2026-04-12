@@ -108,6 +108,7 @@ class JSONDatabase {
     current[keys[keys.length - 1]] = value;
   }
 
+  // @ts-ignore - Used for potential future sorting operations
   private sortDocuments(docs: any[], sort: SortOptions): any[] {
     const sortEntries = Object.entries(sort);
     return docs.sort((a, b) => {

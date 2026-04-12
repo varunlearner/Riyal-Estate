@@ -1,11 +1,8 @@
-import initDB from '@/lib/db/init';
 import { Property } from '@/models/models';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    await initDB();
-
     const { searchParams } = new URL(request.url);
 
     // Pagination
@@ -13,119 +10,142 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
 
-    // Build query
-    const query: any = { status: 'approved' };
+    // Get all approved properties
+    let properties = Property.findAll().filter((p: any) => p.status === 'approved');
 
     // Search by city
     const city = searchParams.get('city');
     if (city) {
-      query['address.city'] = { $regex: city, $options: 'i' };
+      const cityLower = city.toLowerCase();
+      properties = properties.filter((p: any) => p.address?.city?.toLowerCase().includes(cityLower));
     }
 
     // Search by locality
     const locality = searchParams.get('locality');
     if (locality) {
-      query['address.locality'] = { $regex: locality, $options: 'i' };
+      const localityLower = locality.toLowerCase();
+      properties = properties.filter((p: any) => p.address?.locality?.toLowerCase().includes(localityLower));
     }
 
     // Search query (title or description)
     const q = searchParams.get('q');
     if (q) {
-      query.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { 'address.locality': { $regex: q, $options: 'i' } },
-      ];
+      const qLower = q.toLowerCase();
+      properties = properties.filter((p: any) => 
+        p.title?.toLowerCase().includes(qLower) ||
+        p.description?.toLowerCase().includes(qLower) ||
+        p.address?.locality?.toLowerCase().includes(qLower)
+      );
     }
 
     // Listing type (buy/rent)
     const listingType = searchParams.get('listingType');
     if (listingType && listingType !== 'all') {
-      query.listingType = listingType;
+      properties = properties.filter((p: any) => p.listingType === listingType);
     }
 
     // Property type
     const propertyType = searchParams.get('propertyType');
     if (propertyType) {
-      query.propertyType = { $in: propertyType.split(',') };
+      const types = propertyType.split(',');
+      properties = properties.filter((p: any) => types.includes(p.propertyType));
     }
 
     // Price range
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = parseInt(minPrice);
-      if (maxPrice) query.price.$lte = parseInt(maxPrice);
+      properties = properties.filter((p: any) => {
+        const price = p.price || 0;
+        if (minPrice && price < parseInt(minPrice)) return false;
+        if (maxPrice && price > parseInt(maxPrice)) return false;
+        return true;
+      });
     }
 
     // Area range
     const minArea = searchParams.get('minArea');
     const maxArea = searchParams.get('maxArea');
     if (minArea || maxArea) {
-      query.area = {};
-      if (minArea) query.area.$gte = parseInt(minArea);
-      if (maxArea) query.area.$lte = parseInt(maxArea);
+      properties = properties.filter((p: any) => {
+        const area = p.area || 0;
+        if (minArea && area < parseInt(minArea)) return false;
+        if (maxArea && area > parseInt(maxArea)) return false;
+        return true;
+      });
     }
 
     // Bedrooms
     const bedrooms = searchParams.get('bedrooms');
     if (bedrooms) {
-      query.bedrooms = { $in: bedrooms.split(',').map(b => parseInt(b)) };
+      const bedroomList = bedrooms.split(',').map(b => parseInt(b));
+      properties = properties.filter((p: any) => bedroomList.includes(p.bedrooms));
     }
 
     // Bathrooms
     const bathrooms = searchParams.get('bathrooms');
     if (bathrooms) {
-      query.bathrooms = { $in: bathrooms.split(',').map(b => parseInt(b)) };
+      const bathroomList = bathrooms.split(',').map(b => parseInt(b));
+      properties = properties.filter((p: any) => bathroomList.includes(p.bathrooms));
     }
 
     // Furnished
     const furnished = searchParams.get('furnished');
     if (furnished) {
-      query.furnished = { $in: furnished.split(',') };
+      const furnishedList = furnished.split(',');
+      properties = properties.filter((p: any) => furnishedList.includes(p.furnished));
     }
 
     // Possession
     const possession = searchParams.get('possession');
     if (possession) {
-      query.possession = { $in: possession.split(',') };
+      const possessionList = possession.split(',');
+      properties = properties.filter((p: any) => possessionList.includes(p.possession));
     }
 
     // Amenities
     const amenities = searchParams.get('amenities');
     if (amenities) {
-      query.amenities = { $all: amenities.split(',') };
+      const amenityList = amenities.split(',');
+      properties = properties.filter((p: any) => 
+        amenityList.every((a: string) => p.amenities?.includes(a))
+      );
     }
 
     // Featured
     const featured = searchParams.get('featured');
     if (featured === 'true') {
-      query.isFeatured = true;
+      properties = properties.filter((p: any) => p.isFeatured === true);
     }
 
     // Sort
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
-    const sort: any = {};
-    sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
 
-    // Execute query
-    const [properties, total] = await Promise.all([
-      Property.find(query)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Property.countDocuments(query),
-    ]);
+    properties.sort((a: any, b: any) => {
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
 
+      if (typeof aVal === 'string') {
+        aVal = aVal.toLowerCase();
+        bVal = (bVal as string).toLowerCase();
+      }
+
+      if (sortOrder === 'asc') {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    const total = properties.length;
+    const paginatedProperties = properties.slice(skip, skip + limit);
     const pages = Math.ceil(total / limit);
 
     return NextResponse.json({
       success: true,
-      data: properties,
-      count: properties.length,
+      data: paginatedProperties,
+      count: paginatedProperties.length,
       pagination: {
         page,
         limit,
@@ -144,8 +164,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await initDB();
-
     const body = await request.json();
 
     // Validate required fields (reduced from original)
@@ -200,7 +218,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Create property
-    const property = await Property.create(propertyData);
+    const property = Property.create(propertyData);
 
     return NextResponse.json(
       { success: true, data: property, message: 'Property created successfully' },

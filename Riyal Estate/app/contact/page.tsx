@@ -83,8 +83,8 @@ export default function ContactPage() {
               <Card key={index}>
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-holy-100 flex items-center justify-center flex-shrink-0">
-                      <info.icon className="h-6 w-6 text-holy-600" />
+                    <div className="w-12 h-12 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
+                      <info.icon className="h-6 w-6 text-brand-600" />
                     </div>
                     <div>
                       <h3 className="font-semibold mb-2">{info.title}</h3>

@@ -1,12 +1,7 @@
 import Repository from './repository';
-import { User, Property, Lead, SavedProperty } from '@/models/models';
-
-// Using JSON database only
-const USE_JSON_DB = true;
 
 /**
- * Model adapters that provide a unified interface for both MongoDB and JSON databases
- * These adapters wrap the Mongoose models and fall back to JSON database operations
+ * Model adapters that provide a unified interface for JSON database operations
  */
 
 export class UserAdapter {
@@ -33,9 +28,6 @@ export class UserAdapter {
   }
 
   create(data: any) {
-    if (!USE_JSON_DB) {
-      return User.create(data);
-    }
     return this.repo.insertOne(data);
   }
 
@@ -88,9 +80,6 @@ export class PropertyAdapter {
   }
 
   create(data: any) {
-    if (!USE_JSON_DB) {
-      return Property.create(data);
-    }
     return this.repo.insertOne(data);
   }
 
@@ -143,9 +132,6 @@ export class LeadAdapter {
   }
 
   create(data: any) {
-    if (!USE_JSON_DB) {
-      return Lead.create(data);
-    }
     return this.repo.insertOne(data);
   }
 
@@ -198,9 +184,6 @@ export class SavedPropertyAdapter {
   }
 
   create(data: any) {
-    if (!USE_JSON_DB) {
-      return SavedProperty.create(data);
-    }
     return this.repo.insertOne(data);
   }
 

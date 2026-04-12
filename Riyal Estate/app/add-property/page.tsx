@@ -196,7 +196,7 @@ export default function AddPropertyPage() {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" />
       </div>
     );
   }
@@ -216,11 +216,11 @@ export default function AddPropertyPage() {
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div className={`flex flex-col items-center ${
-                  currentStep >= step.id ? 'text-holy-600' : 'text-gray-400'
+                  currentStep >= step.id ? 'text-brand-600' : 'text-gray-400'
                 }`}>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 ${
                     currentStep >= step.id 
-                      ? 'bg-holy-600 text-white' 
+                      ? 'bg-brand-600 text-white' 
                       : 'bg-gray-200 text-gray-500'
                   }`}>
                     <step.icon className="h-5 w-5" />
@@ -229,7 +229,7 @@ export default function AddPropertyPage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div className={`w-12 sm:w-20 h-1 mx-2 ${
-                    currentStep > step.id ? 'bg-holy-600' : 'bg-gray-200'
+                    currentStep > step.id ? 'bg-brand-600' : 'bg-gray-200'
                   }`} />
                 )}
               </div>

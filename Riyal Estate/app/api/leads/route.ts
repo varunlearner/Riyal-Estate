@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import initDB from '@/lib/db/init';
 import { Lead, Property } from '@/models/models';
 
 async function verifyToken(request: NextRequest): Promise<string | null> {
@@ -12,8 +11,6 @@ async function verifyToken(request: NextRequest): Promise<string | null> {
 
 export async function GET(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -25,13 +22,17 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'received'; // 'received' or 'sent'
 
-    const query = type === 'received' 
-      ? { sellerId: token } 
-      : { buyerId: token };
+    let leads: any[] = [];
+    if (type === 'received') {
+      leads = Lead.findBySeller(token);
+    } else {
+      leads = Lead.findByBuyer(token);
+    }
 
-    const leads = await Lead.find(query)
-      .sort({ createdAt: -1 })
-      .lean();
+    // Sort by createdAt descending
+    leads.sort((a: any, b: any) => 
+      new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime()
+    );
 
     return NextResponse.json({
       success: true,
@@ -48,8 +49,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -69,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get property details
-    const property = await Property.findById(propertyId);
+    const property = Property.findById(propertyId);
     if (!property) {
       return NextResponse.json(
         { success: false, error: 'Property not found' },
@@ -78,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create lead
-    const lead = await Lead.create({
+    const lead = Lead.create({
       propertyId,
       propertyTitle: property.title,
       buyerId: token,
@@ -94,7 +93,10 @@ export async function POST(request: NextRequest) {
     });
 
     // Increment property inquiries count
-    await Property.findByIdAndUpdate(propertyId, { $inc: { inquiries: 1 } });
+    const currentProp = Property.findById(propertyId);
+    if (currentProp) {
+      Property.update(propertyId, { inquiries: (currentProp.inquiries || 0) + 1 });
+    }
 
     return NextResponse.json({
       success: true,
@@ -112,8 +114,6 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -125,22 +125,20 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { leadId, status, notes } = body;
 
-    const lead = await Lead.findOneAndUpdate(
-      { _id: leadId, $or: [{ buyerId: token }, { sellerId: token }] },
-      { status, notes, updatedAt: new Date() },
-      { new: true }
-    );
-
-    if (!lead) {
+    const lead = Lead.findById(leadId);
+    
+    if (!lead || (lead.buyerId !== token && lead.sellerId !== token)) {
       return NextResponse.json(
         { success: false, error: 'Lead not found' },
         { status: 404 }
       );
     }
 
+    const updatedLead = Lead.update(leadId, { status, notes, updatedAt: new Date() });
+
     return NextResponse.json({
       success: true,
-      data: lead,
+      data: updatedLead,
       message: 'Lead updated successfully',
     });
   } catch (error: any) {

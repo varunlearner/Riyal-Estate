@@ -37,16 +37,16 @@
     "date-fns": "^3.6.0",
     "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.7",
-    "firebase": "^10.12.4",
+    "firebase": "^12.11.0",
     "framer-motion": "^11.3.8",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.414.0",
     "mongoose": "^8.5.1",
     "next": "^16.1.6",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.13",
     "next-cloudinary": "^6.6.2",
-    "nodemailer": "^7.0.7",
+    "nodemailer": "^8.0.5",
     "postcss": "^8.4.39",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -79,7 +79,7 @@
     "@types/uuid": "^10.0.0",
     "@types/whatwg-url": "^13.0.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "^16.2.3",
     "typescript": "^5.5.4"
   }
 }

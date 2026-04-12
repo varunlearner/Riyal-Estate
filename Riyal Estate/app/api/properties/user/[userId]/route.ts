@@ -1,15 +1,12 @@
-import initDB from '@/lib/db/init';
-import { Property } from '@/models/models';
+import Property from '@/models/Property';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
-        await initDB();
-
-        const { userId } = params;
+        const { userId } = await params;
         const { searchParams } = new URL(request.url);
 
         // Pagination
@@ -20,23 +17,22 @@ export async function GET(
         // Status filter
         const status = searchParams.get('status');
 
-        // Build query
-        const query: any = { 'owner.userId': userId };
+        // Get all properties from user
+        const allProperties = Property.findByOwner(userId);
 
+        // Filter by status if provided
+        let filtered = allProperties;
         if (status && status !== 'all') {
-            query.status = status;
+            filtered = allProperties.filter((p: any) => p.status === status);
         }
 
-        // Execute query
-        const [properties, total] = await Promise.all([
-            Property.find(query)
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit)
-                .lean(),
-            Property.countDocuments(query),
-        ]);
+        // Sort by created date (newest first)
+        filtered.sort((a: any, b: any) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
 
+        const total = filtered.length;
+        const properties = filtered.slice(skip, skip + limit);
         const pages = Math.ceil(total / limit);
 
         return NextResponse.json({

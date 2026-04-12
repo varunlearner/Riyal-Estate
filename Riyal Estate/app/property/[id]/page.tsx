@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  MapPin, Bed, Bath, Maximize, Calendar, CheckCircle2, 
+  MapPin, Bed, Bath, Maximize,
   Phone, Mail, Heart, Share2, ChevronLeft, ChevronRight,
-  Home, Car, Building, Check
+  Home, Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useProperty } from '@/hooks/useProperties';
 import { useAuth } from '@/hooks/useAuth';
 import { formatPrice, formatArea, formatDate } from '@/lib/utils';
-import { AMENITY_OPTIONS } from '@/types';
 import toast from 'react-hot-toast';
 
 export default function PropertyDetailPage() {

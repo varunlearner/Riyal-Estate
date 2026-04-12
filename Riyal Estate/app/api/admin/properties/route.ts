@@ -28,25 +28,28 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const skip = (page - 1) * limit;
 
-    const query: any = {};
+    // Get all properties
+    let properties = Property.findAll();
+
+    // Filter by status if provided
     if (status) {
-      query.status = status;
+      properties = properties.filter((p: any) => p.status === status);
     }
 
-    const [properties, total] = await Promise.all([
-      Property.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Property.countDocuments(query),
-    ]);
+    const total = properties.length;
 
+    // Sort by created date (newest first)
+    properties.sort((a: any, b: any) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    // Paginate
+    const paginatedProperties = properties.slice(skip, skip + limit);
     const pages = Math.ceil(total / limit);
 
     return NextResponse.json({
       success: true,
-      data: properties,
+      data: paginatedProperties,
       pagination: {
         page,
         limit,
@@ -90,11 +93,7 @@ export async function PUT(request: NextRequest) {
     if (isFeatured !== undefined) updateData.isFeatured = isFeatured;
     if (featuredUntil) updateData.featuredUntil = featuredUntil;
 
-    const property = await Property.findByIdAndUpdate(
-      propertyId,
-      updateData,
-      { new: true }
-    );
+    const property = Property.update(propertyId, updateData);
 
     if (!property) {
       return NextResponse.json(
@@ -139,7 +138,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const property = await Property.findByIdAndDelete(propertyId);
+    const property = Property.findById(propertyId);
 
     if (!property) {
       return NextResponse.json(
@@ -147,6 +146,10 @@ export async function DELETE(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    Property.delete(propertyId);
+
+    Property.delete(propertyId);
 
     return NextResponse.json({
       success: true,

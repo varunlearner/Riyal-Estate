@@ -1,5 +1,5 @@
 import { IUser } from '@/types';
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 const UserSchema = new Schema<IUser>(
   {
@@ -56,3 +56,4 @@ UserSchema.index({ role: 1 });
 UserSchema.index({ isActive: 1 });
 
 // JSON Database is used instead - no MongoDB models needed
+export default UserSchema;

@@ -1,1 +1,51 @@
-[]
+[
+  {
+    "title": "2BHK APARTMENT",
+    "description": "LUXURIOUS PROPERTY",
+    "propertyType": "apartment",
+    "listingType": "rent",
+    "price": 2000000,
+    "area": 1000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "balconies": 1,
+    "furnished": "furnished",
+    "possession": "ready",
+    "possessionDate": "",
+    "floor": 12,
+    "totalFloors": 12,
+    "parking": 0,
+    "age": "2",
+    "address": {
+      "street": "",
+      "locality": "INDRA VIHAR",
+      "city": "Delhi",
+      "state": "",
+      "pincode": "",
+      "landmark": ""
+    },
+    "location": {
+      "lat": 0,
+      "lng": 0
+    },
+    "amenities": [
+      "Swimming Pool",
+      "Lift"
+    ],
+    "images": [],
+    "owner": {
+      "userId": "j01TWJ4IKGhdZb6PvxTW4iZkuwv1",
+      "name": "Varun Singh",
+      "phone": "",
+      "email": "vsvarunsingh09@gmail.com",
+      "photo": ""
+    },
+    "status": "pending",
+    "_id": "634b9616-8b90-4911-afb0-d56e6e1b6e50",
+    "views": 4,
+    "inquiries": 0,
+    "shortlists": 0,
+    "createdAt": "2026-04-09T16:04:25.302Z",
+    "updatedAt": "2026-04-09T16:10:36.174Z"
+  }
+]

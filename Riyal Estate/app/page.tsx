@@ -3,15 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, MapPin, Home, Building2, CheckCircle2, Users, TrendingUp, Shield } from 'lucide-react';
+import { Search, MapPin, Building2, CheckCircle2, Users, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { INDIAN_CITIES, PROPERTY_TYPES } from '@/types';
+import { INDIAN_CITIES } from '@/types';
 import PropertyCard from '@/components/property/PropertyCard';
 import { useFeaturedProperties } from '@/hooks/useProperties';
 
 export default function HomePage() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
   const [listingType, setListingType] = useState<'buy' | 'rent'>('buy');
   const [selectedCity, setSelectedCity] = useState('noida');
 
@@ -20,7 +19,6 @@ export default function HomePage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (searchQuery) params.set('q', searchQuery);
     if (selectedCity) params.set('city', selectedCity);
     params.set('listingType', listingType);
     router.push(`/search?${params.toString()}`);

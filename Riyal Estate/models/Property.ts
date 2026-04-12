@@ -1,6 +1,7 @@
 import { IProperty } from '@/types';
 import fs from 'fs';
 import path from 'path';
+import { randomUUID } from 'crypto';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'properties.json');
 
@@ -97,18 +98,19 @@ const Property = {
 
   create(data: Omit<IProperty, '_id' | 'createdAt' | 'updatedAt'>): IProperty {
     const properties = readProperties();
+    const now = new Date();
     const newProperty: IProperty = {
       ...data,
-      _id: crypto.randomUUID(),
+      _id: randomUUID(),
       views: 0,
       inquiries: 0,
       shortlists: 0,
       status: 'pending',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    } as IProperty;
-    properties.push(newProperty);
-    writeProperties(properties);
+      createdAt: now,
+      updatedAt: now,
+    };
+    properties.push(newProperty as any);
+    writeProperties(properties as any);
     return newProperty;
   },
 
@@ -116,8 +118,8 @@ const Property = {
     const properties = readProperties();
     const index = properties.findIndex((p) => p._id === id);
     if (index === -1) return null;
-    properties[index] = { ...properties[index], ...data, updatedAt: new Date().toISOString() };
-    writeProperties(properties);
+    properties[index] = { ...properties[index], ...data, updatedAt: new Date() };
+    writeProperties(properties as any);
     return properties[index];
   },
 
@@ -126,7 +128,7 @@ const Property = {
     const index = properties.findIndex((p) => p._id === id);
     if (index !== -1) {
       properties[index].views = (properties[index].views || 0) + 1;
-      writeProperties(properties);
+      writeProperties(properties as any);
     }
   },
 
@@ -134,7 +136,7 @@ const Property = {
     const properties = readProperties();
     const filtered = properties.filter((p) => p._id !== id);
     if (filtered.length === properties.length) return false;
-    writeProperties(filtered);
+    writeProperties(filtered as any);
     return true;
   },
 };

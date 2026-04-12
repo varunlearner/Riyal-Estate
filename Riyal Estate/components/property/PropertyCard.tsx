@@ -162,8 +162,8 @@ export default function PropertyCard({ property, showActions = true }: PropertyC
           {/* Footer */}
           <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-holy-100 flex items-center justify-center">
-                <span className="text-holy-700 text-xs font-semibold">
+              <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center">
+                <span className="text-brand-700 text-xs font-semibold">
                   {property.owner.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                 </span>
               </div>
@@ -175,7 +175,7 @@ export default function PropertyCard({ property, showActions = true }: PropertyC
             {showActions && (
               <button
                 onClick={handleContact}
-                className="flex items-center gap-1 px-3 py-1.5 bg-holy-50 text-holy-700 rounded-lg text-sm font-medium hover:bg-holy-100 transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 bg-brand-50 text-brand-700 rounded-lg text-sm font-medium hover:bg-brand-100 transition-colors"
               >
                 <Phone className="h-3.5 w-3.5" />
                 Contact

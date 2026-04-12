@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import initDB from '@/lib/db/init';
-import { SavedProperty, Property } from '@/models/models';
+import SavedProperty from '@/models/SavedProperty';
+import Property from '@/models/Property';
 
 async function verifyToken(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get('Authorization');
@@ -12,8 +12,6 @@ async function verifyToken(request: NextRequest): Promise<string | null> {
 
 export async function GET(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -22,15 +20,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const savedProperties = await SavedProperty.find({ userId: token })
-      .sort({ createdAt: -1 })
-      .lean();
+    const savedProperties = SavedProperty.findByUser(token)
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-    const propertyIds = savedProperties.map((sp) => sp.propertyId);
-    const properties = await Property.find({
-      _id: { $in: propertyIds },
-      status: { $in: ['approved', 'sold', 'rented'] },
-    }).lean();
+    const propertyIds = savedProperties.map((sp: any) => sp.propertyId);
+    const allProperties = Property.findAll();
+    const properties = allProperties.filter((p: any) => 
+      propertyIds.includes(p._id) && ['approved', 'sold', 'rented'].includes(p.status)
+    );
 
     return NextResponse.json({
       success: true,
@@ -47,8 +44,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -67,11 +62,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if already saved
-    const existing = await SavedProperty.findOne({
-      userId: token,
-      propertyId,
-    });
+    const existing = SavedProperty.findByUserAndProperty(token, propertyId);
 
     if (existing) {
       return NextResponse.json(
@@ -80,13 +71,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const savedProperty = await SavedProperty.create({
-      userId: token,
-      propertyId,
-    });
+    const savedProperty = SavedProperty.create(token, propertyId);
 
-    // Increment property shortlists count
-    await Property.findByIdAndUpdate(propertyId, { $inc: { shortlists: 1 } });
+    const currentProp = Property.findById(propertyId);
+    if (currentProp) {
+      Property.update(propertyId, { shortlists: (currentProp.shortlists || 0) + 1 });
+    }
 
     return NextResponse.json({
       success: true,
@@ -104,8 +94,6 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    await initDB();
-
     const token = await verifyToken(request);
     if (!token) {
       return NextResponse.json(
@@ -124,13 +112,12 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await SavedProperty.findOneAndDelete({
-      userId: token,
-      propertyId,
-    });
+    SavedProperty.deleteByUserAndProperty(token, propertyId);
 
-    // Decrement property shortlists count
-    await Property.findByIdAndUpdate(propertyId, { $inc: { shortlists: -1 } });
+    const currentProp = Property.findById(propertyId);
+    if (currentProp) {
+      Property.update(propertyId, { shortlists: Math.max(0, (currentProp.shortlists || 1) - 1) });
+    }
 
     return NextResponse.json({
       success: true,
@@ -144,4 +131,3 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
-

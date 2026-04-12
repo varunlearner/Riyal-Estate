@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -121,7 +121,7 @@ export default function EditPropertyPage() {
   if (authLoading || propertyLoading || !formData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" />
       </div>
     );
   }
@@ -329,7 +329,7 @@ export default function EditPropertyPage() {
                         type="checkbox"
                         checked={formData.amenities.includes(amenity)}
                         onChange={() => handleAmenityToggle(amenity)}
-                        className="rounded border-gray-300 text-holy-600 focus:ring-holy-500"
+                        className="rounded border-gray-300 text-brand-600 focus:ring-brand-500"
                       />
                       <span className="text-sm">{amenity}</span>
                     </label>

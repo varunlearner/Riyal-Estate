@@ -21,7 +21,6 @@ export default function AdminDashboardPage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading, isAdmin } = useAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
-  const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -56,15 +55,13 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
-    } finally {
-      setIsLoadingStats(false);
     }
   };
 
   if (isLoading || !isAuthenticated || !isAdmin) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" />
       </div>
     );
   }
@@ -186,8 +183,8 @@ export default function AdminDashboardPage() {
                   {Object.entries(stats.usersByRole).map(([role, count]) => (
                     <div key={role} className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-holy-100 flex items-center justify-center">
-                          <Users className="h-4 w-4 text-holy-600" />
+                        <div className="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center">
+                          <Users className="h-4 w-4 text-brand-600" />
                         </div>
                         <span className="capitalize">{role}s</span>
                       </div>

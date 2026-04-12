@@ -1,35 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Protected routes that require authentication
-const protectedRoutes = [
-  '/dashboard',
-  '/profile',
-  '/saved',
-  '/inquiries',
-  '/properties',
-  '/add-property',
-  '/edit-property',
-  '/leads',
-];
-
-// Admin only routes
-const adminRoutes = [
-  '/admin',
-];
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Check if the route is protected
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname.startsWith(route)
-  );
-
-  const isAdminRoute = adminRoutes.some(route => 
-    pathname.startsWith(route)
-  );
-
+export function middleware(_request: NextRequest) {
   // For now, we'll let the client-side handle authentication
   // In production, you would verify the Firebase token here
 

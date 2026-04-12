@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import initDB from '@/lib/db/init';
-import { Property } from '@/models/models';
+import Property from '@/models/Property';
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await initDB();
-
-    const property = await Property.findById(params.id).lean();
+    const { id } = await params;
+    
+    const property = Property.findById(id);
 
     if (!property) {
       return NextResponse.json(
@@ -19,7 +18,9 @@ export async function GET(
     }
 
     // Increment views
-    await Property.findByIdAndUpdate(params.id, { $inc: { views: 1 } });
+    if (property) {
+      Property.update(id, { views: (property.views || 0) + 1 });
+    }
 
     return NextResponse.json({
       success: true,
@@ -36,18 +37,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await initDB();
-
+    const { id } = await params;
     const body = await request.json();
 
-    const property = await Property.findByIdAndUpdate(
-      params.id,
-      { ...body, updatedAt: new Date() },
-      { new: true, runValidators: true }
-    );
+    const property = Property.update(id, { ...body, updatedAt: new Date() });
 
     if (!property) {
       return NextResponse.json(
@@ -71,15 +67,15 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await connectDB();
+    const { id } = await params;
 
-    const property = await Property.findByIdAndDelete(params.id);
+    const deleted = Property.delete(id);
 
-    if (!property) {
+    if (!deleted) {
       return NextResponse.json(
         { success: false, error: 'Property not found' },
         { status: 404 }

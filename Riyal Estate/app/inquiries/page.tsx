@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MessageSquare, Phone, Mail, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { MessageSquare, Phone, Mail, Calendar } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 import { ILead } from '@/types';
 import { formatDate } from '@/lib/utils';
-import toast from 'react-hot-toast';
 
 export default function InquiriesPage() {
   const router = useRouter();

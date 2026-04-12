@@ -10,7 +10,7 @@ import { Suspense, useEffect, useState } from 'react';
 
 export default function ComparePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" /></div>}>
       <CompareContent />
     </Suspense>
   );
@@ -58,7 +58,7 @@ function CompareContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" />
       </div>
     );
   }
@@ -149,7 +149,7 @@ function CompareContent() {
             <div className="p-4 font-medium bg-gray-50">Price</div>
             {properties.map((property) => (
               <div key={property._id} className="p-4 bg-gray-50">
-                <p className="text-holy-600 font-bold">{formatPrice(property.price)}</p>
+                <p className="text-brand-600 font-bold">{formatPrice(property.price)}</p>
               </div>
             ))}
 

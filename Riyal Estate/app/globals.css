@@ -538,11 +538,11 @@ textarea::placeholder {
 
 /* Button hover effects */
 .btn-primary {
-  @apply bg-holy-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  @apply bg-brand-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300;
 }
 
 .btn-primary:hover {
-  @apply bg-holy-700 shadow-lg transform -translate-y-0.5;
+  @apply bg-brand-700 shadow-lg transform -translate-y-0.5;
 }
 
 .btn-secondary {
@@ -555,7 +555,7 @@ textarea::placeholder {
 
 /* Form inputs */
 .form-input {
-  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-holy-500 focus:border-transparent transition-all duration-200;
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all duration-200;
 }
 
 /* Section spacing */

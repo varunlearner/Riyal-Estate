@@ -1,8 +1,8 @@
-import { UserSchema as User } from '../User';
-import { PropertySchema as Property } from '../Property';
-import { LeadSchema as Lead } from '../Lead';
-import { SavedPropertySchema as SavedProperty } from '../SavedProperty';
-import { AgentProfileSchema as AgentProfile } from '../AgentProfile';
+import User from '../User';
+import Property from '../Property';
+import Lead from '../Lead';
+import SavedProperty from '../SavedProperty';
+import AgentProfile from '../AgentProfile';
 
 export {
   User,

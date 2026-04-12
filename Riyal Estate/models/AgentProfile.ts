@@ -47,11 +47,11 @@ const AgentProfile = {
       specializations: data.specializations || [],
       areas: data.areas || [],
       ratings: { average: 0, count: 0 },
-      createdAt: new Date().toISOString() as unknown as Date,
-      updatedAt: new Date().toISOString() as unknown as Date,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
-    profiles.push(newProfile);
-    writeAgentProfiles(profiles);
+    profiles.push(newProfile as any);
+    writeAgentProfiles(profiles as any);
     return newProfile;
   },
 
@@ -62,9 +62,9 @@ const AgentProfile = {
     profiles[index] = { 
       ...profiles[index], 
       ...data, 
-      updatedAt: new Date().toISOString() as unknown as Date 
+      updatedAt: new Date() 
     };
-    writeAgentProfiles(profiles);
+    writeAgentProfiles(profiles as any);
     return profiles[index];
   },
 

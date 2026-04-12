@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Building2, Heart, MessageSquare, TrendingUp, 
-  Plus, Eye, Phone, ArrowRight 
+  Plus, Eye, ArrowRight 
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,7 +27,7 @@ export default function DashboardPage() {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-holy-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-600" />
       </div>
     );
   }
@@ -184,8 +184,8 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   {properties.slice(0, 3).map((property) => (
                     <div key={property._id} className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-holy-100 flex items-center justify-center flex-shrink-0">
-                        <Eye className="h-5 w-5 text-holy-600" />
+                      <div className="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
+                        <Eye className="h-5 w-5 text-brand-600" />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{property.title}</p>
